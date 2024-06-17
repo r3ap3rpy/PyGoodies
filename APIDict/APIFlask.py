@@ -1,17 +1,20 @@
 try:
-    from flask import Flask, request, abort
+    from flask import Flask, request, abort, Response
 except:
     raise SystemExit("Please: pip install flask")
+import sys
 
-from json import dumps
+sys.path.append("..\\")
+from FileDict import FileDict
 
-my_dict = dict()
+my_dict = FileDict(dirname='flaskdict')
 
 app = Flask(__name__)
 
 @app.route("/", methods = ["GET"])
 def index():
-    return dumps(my_dict)
+    global my_dict
+    return dict(my_dict)
 
 @app.route("/set", methods = ['POST'])
 def setitem():
@@ -20,7 +23,7 @@ def setitem():
     my_value = request.args.get("value",0)
     if my_key and my_value:
         my_dict[my_key] = my_value
-        return dumps({my_key : my_value})
+        return dict({my_key : my_value})
     else:
         abort(400, "/set?key=name&value=value")
 
@@ -28,9 +31,9 @@ def setitem():
 def getitem():
     global my_dict
     if my_dict.get(request.args.get('key')):
-        return dumps({request.args.get('key') : my_dict[request.args.get('key')]})
+        return dict({request.args.get('key') : my_dict[request.args.get('key')]})
     else:
-        return dumps({request.args.get('key') : 'N.A.'})
+        return dict({request.args.get('key') : 'N.A.'})
     
 @app.route("/del", methods = ["POST"])
 def delitem():

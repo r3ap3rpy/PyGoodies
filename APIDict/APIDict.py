@@ -7,8 +7,9 @@ from collections.abc import MutableMapping
 from json import loads
 
 class APIDict(MutableMapping):
-    def __init__(self, endpoint):
+    def __init__(self, endpoint, pairs = [], **kwargs):
         self.endpoint = endpoint
+        self.update(pairs, **kwargs)
 
     def __getitem__(self, key):
         return loads(requests.get(url = f"{self.endpoint}/get?key={key}").text)
@@ -30,8 +31,11 @@ class APIDict(MutableMapping):
 
 if __name__ == '__main__':
     ad = APIDict(endpoint="http://192.168.50.145:8000")
-    ad['a'] = 10
-    ad['b'] = 20
+    #ad['a'] = 30
+    #ad['b'] = 20
     print(ad['a'])
+    ad['b'] = 40
+    #del ad['a']
+    print(len(ad))
     for item in iter(ad):
         print(item)
